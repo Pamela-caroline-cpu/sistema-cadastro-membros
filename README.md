@@ -45,9 +45,11 @@ mesmo). Pra tirar o acesso de alguém, muda a função de volta pra "Membro" e a
 
 ## QR Code
 
-Logado, tem "QR Code" no menu. Gera automático pro endereço que você tá usando pra acessar, com opção de
-baixar em PNG ou imprimir. Se acessar por `localhost` ele avisa que aquele QR só serve nesse computador mesmo
-- pra funcionar nos celulares da igreja precisa acessar pelo IP da máquina na rede.
+Logado, tem "QR Code" no menu. A página detecta sozinha o IP da máquina na rede (usando um socket UDP pra
+descobrir qual interface o Windows usaria pra sair pra rede, sem precisar de nenhuma extensão) e gera o QR já
+com esse IP - não importa se você acessou a página por `localhost` ou pelo IP, o QR sempre sai certo pra ser
+escaneado de outro celular. Tem opção de baixar em PNG ou imprimir. Só avisa se não conseguir detectar o IP
+(máquina sem rede, por exemplo).
 
 ## Deixando o IP fixo (pra imprimir o QR uma vez só)
 
@@ -68,7 +70,8 @@ Set-DnsClientServerAddress -InterfaceAlias "Ethernet" -ServerAddresses 8.8.8.8,1
 ```
 Troca o nome da interface e o IP pra um que esteja fora da faixa que o roteador distribui sozinho.
 
-Depois disso, acessa `http://<IP-fixo>:8000/qrcode.php` (não localhost) e baixa/imprime o QR de lá.
+Depois disso, é só acessar `qrcode.php` (pode ser até por `localhost`, a página detecta o IP sozinha) e
+baixar/imprimir o QR - ele já sai apontando pro IP fixo.
 
 ## Rodando em outra máquina, do zero
 

@@ -1,17 +1,20 @@
 <?php
 require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/includes/funcoes.php';
 require_once __DIR__ . '/includes/auth.php';
 exigir_login();
 
-// pega o host que a pessoa usou pra acessar, então o link/QR já sai certo
-// (não precisa trocar isso na mão quando mudar de servidor)
+// gera o QR sempre com o IP real da máquina na rede, não importa como o
+// admin acessou essa página (mesmo por localhost o QR sai certo)
 $esquema = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$porta = $_SERVER['SERVER_PORT'] ?? '8000';
 $pasta = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])), '/');
-$urlPublica = "{$esquema}://{$host}{$pasta}/cadastro-publico.php";
 
-// se acessou por localhost o QR só funciona nesse pc mesmo, avisar
-$enderecoLocal = (bool) preg_match('/^(localhost|127\.0\.0\.1|\[::1\])(:|$)/i', $host);
+$ipLocal = ip_local_da_maquina();
+$falhaDeteccao = $ipLocal === null;
+$host = $ipLocal ? "{$ipLocal}:{$porta}" : ($_SERVER['HTTP_HOST'] ?? 'localhost');
+
+$urlPublica = "{$esquema}://{$host}{$pasta}/cadastro-publico.php";
 
 $tituloPagina = 'QR Code de Autocadastro';
 require __DIR__ . '/includes/header.php';
@@ -22,13 +25,11 @@ require __DIR__ . '/includes/header.php';
     <a href="index.php" class="botao botao-link">&larr; Voltar para a lista</a>
 </div>
 
-<?php if ($enderecoLocal): ?>
+<?php if ($falhaDeteccao): ?>
     <div class="alerta alerta-erro">
-        <strong>Este QR Code só vai funcionar neste computador.</strong><br>
-        Você está acessando por "<?= htmlspecialchars($host) ?>", que só existe localmente. Para gerar um QR
-        Code que funcione nos celulares da igreja, acesse esta página pelo <strong>IP fixo desta máquina na
-        rede</strong> — por exemplo <code>http://192.168.1.50:8000/qrcode.php</code> — em vez de localhost.
-        Veja a seção "IP fixo para o QR Code sempre funcionar" no README do projeto.
+        <strong>Não consegui detectar o IP desta máquina na rede.</strong><br>
+        O QR Code abaixo foi gerado com "<?= htmlspecialchars($host) ?>", que só funciona neste computador.
+        Confira se a máquina está conectada à rede (cabo ou Wi-Fi) e recarregue esta página.
     </div>
 <?php endif; ?>
 

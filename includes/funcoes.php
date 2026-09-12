@@ -20,3 +20,19 @@ function funcoes_disponiveis(): array
 {
     return ['Membro', 'Líder de Louvor', 'Diácono', 'Diaconisa', 'Obreiro(a)', 'Pastor Auxiliar', 'Pastor Titular'];
 }
+
+// descobre o IP da máquina na rede local, sem precisar de extensão nenhuma:
+// "conecta" um socket udp a um endereço externo (não manda nada de verdade,
+// só faz o SO escolher a rota) e lê qual IP local foi usado nessa rota
+function ip_local_da_maquina(): ?string
+{
+    $conexao = @stream_socket_client('udp://8.8.8.8:53', $codigoErro, $mensagemErro, 1);
+    if (!$conexao) {
+        return null;
+    }
+    $nome = stream_socket_get_name($conexao, false);
+    fclose($conexao);
+
+    $posicao = strrpos($nome, ':');
+    return $posicao !== false ? substr($nome, 0, $posicao) : $nome;
+}
