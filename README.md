@@ -33,7 +33,9 @@ Sistema.exe` normalmente. O instalador:
 1. Instala o PHP, se necessário (via `winget`);
 2. Instala e configura o MariaDB, se necessário, registra e liga o serviço do Windows;
 3. Importa o banco de dados inicial (só se ele ainda não existir — nunca apaga dados já cadastrados);
-4. Ajusta `config/database.php` com a porta certa do banco.
+4. Ajusta `config/database.php` com a porta certa do banco;
+5. Cria um atalho **"Sistema de Cadastro de Membros"** na Área de Trabalho, apontando para `Iniciar
+   Sistema.exe` — depois da instalação, não precisa mais abrir a pasta do sistema, é só usar esse atalho.
 
 O Windows vai pedir permissão de Administrador (obrigatório para instalar programas) — é só clicar em "Sim".
 Uma janela mostra o progresso e fecha sozinha ao final; os detalhes ficam salvos em `instalar.log`, na mesma

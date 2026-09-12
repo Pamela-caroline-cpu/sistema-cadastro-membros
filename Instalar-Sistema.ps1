@@ -192,11 +192,30 @@ try {
         }
     }
 
-    # --- 5) Marca a instalação como concluída --------------------------------------
+    # --- 5) Cria um atalho na Área de Trabalho para "Iniciar Sistema.exe" ----------
+    try {
+        $iniciarExe = Join-Path $pastaProjeto 'Iniciar Sistema.exe'
+        $areaTrabalho = [Environment]::GetFolderPath('Desktop')
+        $atalho = Join-Path $areaTrabalho 'Sistema de Cadastro de Membros.lnk'
+        if ((Test-Path $iniciarExe) -and -not (Test-Path $atalho)) {
+            Info 'Criando atalho na Área de Trabalho...'
+            $wsh = New-Object -ComObject WScript.Shell
+            $lnk = $wsh.CreateShortcut($atalho)
+            $lnk.TargetPath = $iniciarExe
+            $lnk.WorkingDirectory = $pastaProjeto
+            $lnk.IconLocation = "$iniciarExe,0"
+            $lnk.Description = 'Abre o Sistema de Cadastro de Membros'
+            $lnk.Save()
+        }
+    } catch {
+        Add-Content -Path $arquivoLog -Value "$(Get-Date -Format 'HH:mm:ss') [AVISO] Não consegui criar o atalho na Área de Trabalho: $($_.Exception.Message)"
+    }
+
+    # --- 6) Marca a instalação como concluída --------------------------------------
     Info 'Gravando marcador de instalação concluída...'
     Set-Content -Path (Join-Path $pastaProjeto '.instalado') -Value (Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
 
-    Mostrar-Info "Instalação concluída!`n`nPHP: $phpExe`nBanco de dados: porta $portaBanco`n`nO sistema vai iniciar agora."
+    Mostrar-Info "Instalação concluída!`n`nPHP: $phpExe`nBanco de dados: porta $portaBanco`n`nUm atalho foi criado na Área de Trabalho.`nO sistema vai iniciar agora."
 } catch {
     Add-Content -Path $arquivoLog -Value "$(Get-Date -Format 'HH:mm:ss') [EXCECAO] $($_.Exception.Message)`n$($_.ScriptStackTrace)"
     Mostrar-Erro "Ocorreu um erro durante a instalação:`n`n$($_.Exception.Message)`n`nDetalhes salvos em: $arquivoLog"
