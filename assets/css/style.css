@@ -1,0 +1,482 @@
+/* ==========================================================================
+   Este arquivo é MOBILE-FIRST: os estilos "soltos" abaixo (sem media query)
+   valem para celular, que é o principal dispositivo de uso deste sistema.
+   As telas maiores (tablet/desktop) só GANHAM camadas extras dentro do
+   @media (min-width: 720px) no final do arquivo.
+   ========================================================================== */
+
+:root {
+    /* Paleta extraída da logo da igreja (cruz, pomba, cálice e coroa) */
+    --azul-principal: #0089cd;
+    --azul-escuro: #004b71;
+    --amarelo: #ffcb05;
+    --roxo: #802a8f;
+    --dourado: var(--amarelo); /* mantém compatibilidade com os usos existentes de "dourado" */
+    --verde: #2f9e5b;
+    --vermelho: #eb1c24;
+    --cinza-fundo: #f4f6f9;
+    --cinza-borda: #dfe3e8;
+    --cinza-texto: #4a5568;
+    --branco: #ffffff;
+    --sombra: 0 2px 8px rgba(0, 45, 68, 0.1);
+    --raio: 8px;
+    --toque-min: 44px; /* altura mínima recomendada para alvos de toque */
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+    background: var(--cinza-fundo);
+    color: #1f2937;
+    line-height: 1.5;
+    font-size: 16px;
+}
+
+a { color: var(--azul-principal); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Topo (fixo no topo para ficar sempre acessível ao rolar listas longas no celular) */
+.topo {
+    background: linear-gradient(135deg, var(--azul-escuro), var(--azul-principal));
+    color: var(--branco);
+    box-shadow: var(--sombra);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.topo-conteudo {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.marca {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--branco);
+    font-weight: 700;
+    font-size: 1rem;
+}
+.marca:hover { text-decoration: none; }
+
+.marca-icone {
+    background: var(--branco);
+    width: 38px;
+    height: 38px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 3px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+.marca-icone img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 5px;
+    display: block;
+}
+
+/* Faixa com as quatro cores da logo (cruz, pomba, cálice, coroa) */
+.faixa-marca { display: flex; height: 5px; }
+.faixa-marca span { flex: 1; }
+.faixa-marca .f-vermelho { background: var(--vermelho); }
+.faixa-marca .f-amarelo { background: var(--amarelo); }
+.faixa-marca .f-azul { background: var(--azul-principal); }
+.faixa-marca .f-roxo { background: var(--roxo); }
+
+.marca small {
+    display: block;
+    font-weight: 400;
+    font-size: 0.72rem;
+    color: #cfe0f5;
+}
+
+.menu { display: flex; align-items: center; gap: 12px; }
+.menu a { color: var(--branco); font-weight: 500; font-size: 0.9rem; }
+.botao-menu {
+    background: var(--dourado);
+    color: var(--azul-escuro) !important;
+    padding: 10px 16px;
+    border-radius: var(--raio);
+    font-weight: 700;
+    min-height: var(--toque-min);
+    display: inline-flex;
+    align-items: center;
+}
+.botao-menu:hover { text-decoration: none; opacity: 0.9; }
+
+/* Conteúdo */
+.conteudo {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 16px 14px 48px;
+}
+
+.cabecalho-pagina {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+.cabecalho-pagina h1 { margin: 0; font-size: 1.35rem; color: var(--azul-escuro); }
+
+.resumo-cards { display: flex; gap: 10px; width: 100%; }
+.card-resumo {
+    background: var(--branco);
+    border: 1px solid var(--cinza-borda);
+    border-radius: var(--raio);
+    padding: 10px 14px;
+    text-align: center;
+    flex: 1;
+}
+.card-resumo .numero { display: block; font-size: 1.3rem; font-weight: 700; color: var(--azul-principal); }
+.card-resumo .rotulo { font-size: 0.72rem; color: var(--cinza-texto); }
+.card-resumo-ativo .numero { color: var(--verde); }
+
+/* Alertas */
+.alerta { padding: 12px 16px; border-radius: var(--raio); margin-bottom: 16px; font-size: 0.92rem; }
+.alerta-sucesso { background: #e5f7ec; color: #1e7a45; border: 1px solid #b7e6c8; }
+.alerta-erro { background: #fdecea; color: #a4271f; border: 1px solid #f5c2bd; }
+.alerta-erro ul { margin: 6px 0 0; padding-left: 20px; }
+
+/* Filtros */
+.barra-filtros {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px;
+    background: var(--branco);
+    padding: 14px;
+    border-radius: var(--raio);
+    border: 1px solid var(--cinza-borda);
+}
+.barra-filtros input, .barra-filtros select {
+    padding: 11px 12px;
+    border: 1px solid var(--cinza-borda);
+    border-radius: 6px;
+    font-size: 1rem;
+    min-height: var(--toque-min);
+    width: 100%;
+}
+.barra-filtros .botao { width: 100%; }
+
+/* Botões */
+.botao {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 11px 18px;
+    border-radius: 6px;
+    border: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    min-height: var(--toque-min);
+}
+.botao:hover { text-decoration: none; opacity: 0.92; }
+.botao-primario { background: var(--azul-principal); color: var(--branco); }
+.botao-secundario { background: var(--branco); color: var(--azul-principal); border: 1px solid var(--azul-principal); }
+.botao-perigo { background: var(--vermelho); color: var(--branco); }
+.botao-link { background: transparent; color: var(--azul-principal); padding: 11px 4px; min-height: auto; }
+
+/* Listagem de membros: no celular vira uma lista de cartões (sem tabela) */
+.tabela-wrapper {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+.tabela, .tabela tbody, .tabela tr, .tabela td { display: block; width: 100%; }
+.tabela thead { display: none; }
+.tabela tr {
+    background: var(--branco);
+    border: 1px solid var(--cinza-borda);
+    border-radius: var(--raio);
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    box-shadow: var(--sombra);
+}
+.tabela td { border: none; padding: 6px 0; font-size: 0.95rem; }
+.tabela td::before {
+    content: attr(data-rotulo) ": ";
+    font-weight: 700;
+    color: var(--azul-escuro);
+}
+.coluna-acoes { white-space: normal; }
+
+.selo { padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; }
+.selo-ativo { background: #e5f7ec; color: #1e7a45; }
+.selo-inativo { background: #f1f2f4; color: #6b7280; }
+
+/* Ações da lista: "chips" grandes o bastante para toque no celular */
+td[data-rotulo="Ações"] { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 10px !important; }
+.acao {
+    font-size: 0.85rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    padding: 9px 14px;
+    border-radius: 6px;
+    min-height: var(--toque-min);
+    display: inline-flex;
+    align-items: center;
+}
+.acao-ver { color: var(--azul-principal); background: #eaf0fa; }
+.acao-editar { color: #7a5a12; background: #fbf1de; }
+.acao-excluir { color: var(--vermelho); background: #fdecea; }
+.form-excluir { display: inline; }
+
+.estado-vazio {
+    text-align: center;
+    padding: 40px 16px;
+    background: var(--branco);
+    border: 1px dashed var(--cinza-borda);
+    border-radius: var(--raio);
+}
+.estado-vazio p { color: var(--cinza-texto); margin-bottom: 16px; }
+
+/* Formulário */
+.formulario-membro fieldset {
+    background: var(--branco);
+    border: 1px solid var(--cinza-borda);
+    border-radius: var(--raio);
+    padding: 16px;
+    margin-bottom: 16px;
+}
+.formulario-membro legend { padding: 0 8px; font-weight: 700; color: var(--azul-escuro); }
+
+.grade-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+.campo { display: flex; flex-direction: column; gap: 6px; }
+
+.campo label { font-size: 0.85rem; font-weight: 600; color: var(--cinza-texto); }
+.ajuda-campo { font-size: 0.78rem; color: var(--cinza-texto); font-weight: 400; }
+.campo input, .campo select, .campo textarea {
+    padding: 11px 12px;
+    border: 1px solid var(--cinza-borda);
+    border-radius: 6px;
+    font-size: 1rem; /* >=16px evita zoom automático ao focar campo no iOS */
+    font-family: inherit;
+    min-height: var(--toque-min);
+    width: 100%;
+}
+.campo textarea { min-height: 90px; }
+.campo input:focus, .campo select:focus, .campo textarea:focus {
+    outline: none;
+    border-color: var(--azul-principal);
+    box-shadow: 0 0 0 3px rgba(0, 137, 205, 0.18);
+}
+
+.acoes-formulario { display: flex; flex-direction: column-reverse; gap: 10px; }
+.acoes-formulario .botao { width: 100%; }
+
+/* Ficha de visualização */
+.ficha-membro {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+.ficha-secao {
+    background: var(--branco);
+    border: 1px solid var(--cinza-borda);
+    border-radius: var(--raio);
+    padding: 16px;
+}
+.ficha-secao h2 { margin: 0 0 12px; font-size: 1rem; color: var(--azul-escuro); border-bottom: 2px solid var(--dourado); padding-bottom: 6px; }
+.ficha-secao dl { margin: 0; display: grid; grid-template-columns: 1fr; row-gap: 10px; }
+.ficha-secao dt { color: var(--cinza-texto); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.02em; }
+.ficha-secao dd { margin: 2px 0 0; font-weight: 500; }
+
+/* Rodapé */
+.rodape {
+    text-align: center;
+    padding: 18px;
+    color: var(--cinza-texto);
+    font-size: 0.8rem;
+    border-top: 1px solid var(--cinza-borda);
+}
+
+.botao-largo { width: 100%; }
+
+/* Usuário logado no menu */
+.usuario-logado { color: #cfe6fb; font-size: 0.85rem; }
+
+/* Página de login */
+.pagina-login {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+    background: linear-gradient(135deg, var(--azul-escuro), var(--azul-principal));
+}
+.cartao-login {
+    background: var(--branco);
+    border-radius: var(--raio);
+    padding: 28px 24px;
+    max-width: 380px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+.logo-login { width: 64px; height: 64px; border-radius: 12px; margin-bottom: 12px; }
+.cartao-login h1 { font-size: 1.3rem; color: var(--azul-escuro); margin: 0 0 4px; }
+.subtitulo-login { color: var(--cinza-texto); font-size: 0.85rem; margin: 0 0 18px; }
+.formulario-login { display: flex; flex-direction: column; gap: 14px; text-align: left; }
+.formulario-login input {
+    padding: 11px 12px;
+    border: 1px solid var(--cinza-borda);
+    border-radius: 6px;
+    font-size: 1rem;
+    min-height: var(--toque-min);
+    width: 100%;
+}
+.ajuda-login { font-size: 0.82rem; color: var(--cinza-texto); margin-top: 18px; }
+
+/* Página pública de autocadastro */
+.topo-conteudo-publico { justify-content: center; }
+.conteudo-publico { max-width: 640px; }
+.conteudo-publico h1 { color: var(--azul-escuro); font-size: 1.4rem; }
+.texto-publico { color: var(--cinza-texto); margin-bottom: 18px; }
+.cartao-sucesso {
+    background: var(--branco);
+    border-radius: var(--raio);
+    padding: 32px 20px;
+    text-align: center;
+    box-shadow: var(--sombra);
+}
+.icone-sucesso {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #e5f7ec;
+    color: #1e7a45;
+    font-size: 1.8rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 14px;
+}
+.cartao-sucesso h1 { margin: 0 0 10px; }
+.cartao-sucesso p { color: var(--cinza-texto); margin-bottom: 22px; }
+
+/* Página de QR Code */
+.cartao-qrcode {
+    background: var(--branco);
+    border: 1px solid var(--cinza-borda);
+    border-radius: var(--raio);
+    padding: 20px;
+    text-align: center;
+}
+.texto-qrcode { color: var(--cinza-texto); margin-bottom: 18px; }
+.caixa-qrcode { display: flex; justify-content: center; margin-bottom: 20px; }
+.caixa-qrcode img, .caixa-qrcode canvas { border: 8px solid var(--branco); box-shadow: var(--sombra); }
+.campo-link-publico { margin-bottom: 18px; text-align: left; }
+.grupo-copiar { display: flex; flex-direction: column; gap: 8px; }
+.grupo-copiar input {
+    padding: 11px 12px;
+    border: 1px solid var(--cinza-borda);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    min-height: var(--toque-min);
+    width: 100%;
+    background: var(--cinza-fundo);
+}
+.aviso-copiado { display: block; color: var(--verde); font-size: 0.82rem; margin-top: 6px; }
+.aviso-copiado[hidden] { display: none; }
+.nota-qrcode { color: var(--cinza-texto); font-size: 0.82rem; margin-top: 16px; }
+
+@media print {
+    .topo, .rodape, .cabecalho-pagina a, .campo-link-publico, .nota-qrcode, button { display: none !important; }
+    .conteudo { padding: 0; }
+    .cartao-qrcode { border: none; }
+}
+
+/* ==========================================================================
+   A PARTIR DAQUI: camadas progressivas para telas maiores (tablet/desktop).
+   Nada aqui é necessário para o celular funcionar — só aproveita o espaço extra.
+   ========================================================================== */
+@media (min-width: 720px) {
+    .topo-conteudo { padding: 16px 24px; }
+    .marca { font-size: 1.1rem; gap: 12px; }
+    .marca-icone { width: 40px; height: 40px; font-size: 1.2rem; }
+    .marca small { font-size: 0.75rem; }
+    .menu { gap: 18px; }
+    .menu a { font-size: 1rem; }
+
+    .conteudo { padding: 28px 24px 60px; }
+
+    .cabecalho-pagina { flex-direction: row; align-items: center; justify-content: space-between; }
+    .cabecalho-pagina h1 { font-size: 1.6rem; }
+    .resumo-cards { width: auto; }
+    .card-resumo { flex: none; min-width: 90px; }
+
+    .barra-filtros { flex-direction: row; flex-wrap: wrap; }
+    .barra-filtros input { flex: 1; min-width: 200px; width: auto; }
+    .barra-filtros select { width: auto; }
+    .barra-filtros .botao { width: auto; }
+
+    /* Listagem volta a ser uma tabela de verdade */
+    .tabela-wrapper {
+        background: var(--branco);
+        border-radius: var(--raio);
+        border: 1px solid var(--cinza-borda);
+        overflow-x: auto;
+        box-shadow: var(--sombra);
+    }
+    .tabela { width: 100%; border-collapse: collapse; min-width: 640px; }
+    .tabela thead { display: table-header-group; }
+    .tabela, .tabela tbody, .tabela tr, .tabela td { display: revert; width: auto; }
+    .tabela tr { background: none; border: none; border-bottom: 1px solid var(--cinza-borda); border-radius: 0; padding: 0; margin-bottom: 0; box-shadow: none; }
+    .tabela th, .tabela td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--cinza-borda); font-size: 0.92rem; }
+    .tabela th { background: #eef2f8; color: var(--azul-escuro); font-weight: 700; }
+    .tabela tbody tr:hover { background: #f8fafc; }
+    .tabela td::before { content: none; }
+    td[data-rotulo="Ações"] { padding-top: 12px !important; white-space: nowrap; flex-wrap: nowrap; }
+    .acao { padding: 4px 8px; background: none !important; min-height: auto; }
+    .acao-ver { color: var(--azul-principal); }
+    .acao-editar { color: var(--dourado); }
+    .acao-excluir { color: var(--vermelho); }
+
+    .estado-vazio { padding: 50px 20px; }
+
+    .formulario-membro fieldset { padding: 18px 20px; }
+    .grade-form { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .campo-largo { grid-column: span 3; }
+    .campo-pequeno { grid-column: span 1; max-width: 100px; }
+
+    .acoes-formulario { flex-direction: row; justify-content: flex-end; align-items: center; }
+    .acoes-formulario .botao { width: auto; }
+
+    .ficha-membro { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .ficha-secao { padding: 18px 20px; }
+    .ficha-secao-larga { grid-column: span 2; }
+    .ficha-secao dl { grid-template-columns: 140px 1fr; row-gap: 8px; }
+    .ficha-secao dt { text-transform: none; letter-spacing: normal; font-size: 0.85rem; }
+    .ficha-secao dd { margin: 0; }
+
+    .grupo-copiar { flex-direction: row; }
+    .grupo-copiar input { width: auto; flex: 1; }
+    .cartao-qrcode { padding: 28px; }
+}
