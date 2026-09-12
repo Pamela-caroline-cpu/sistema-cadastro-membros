@@ -114,6 +114,17 @@ a:hover { text-decoration: underline; }
 }
 .botao-menu:hover { text-decoration: none; opacity: 0.9; }
 
+.botao-entrar {
+    color: var(--branco);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    padding: 8px 14px;
+    border-radius: var(--raio);
+    font-weight: 600;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+.botao-entrar:hover { text-decoration: none; background: rgba(255, 255, 255, 0.15); }
+
 /* Conteúdo */
 .conteudo {
     max-width: 1100px;
@@ -349,7 +360,6 @@ td[data-rotulo="Ações"] { display: flex; flex-wrap: wrap; gap: 8px; padding-to
 .ajuda-login { font-size: 0.82rem; color: var(--cinza-texto); margin-top: 18px; }
 
 /* Página pública de autocadastro */
-.topo-conteudo-publico { justify-content: center; }
 .conteudo-publico { max-width: 640px; }
 .conteudo-publico h1 { color: var(--azul-escuro); font-size: 1.4rem; }
 .texto-publico { color: var(--cinza-texto); margin-bottom: 18px; }

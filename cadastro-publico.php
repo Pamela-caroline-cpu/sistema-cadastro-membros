@@ -83,7 +83,7 @@ function valor_publico(array $membro, string $campo): string
 </head>
 <body>
 <header class="topo">
-    <div class="topo-conteudo topo-conteudo-publico">
+    <div class="topo-conteudo">
         <span class="marca">
             <span class="marca-icone"><img src="assets/img/logo.jpg" alt="Logo da igreja"></span>
             <span>
@@ -91,6 +91,7 @@ function valor_publico(array $membro, string $campo): string
                 <small>Primeira Igreja Quadrangular &mdash; Dois Vizinhos/PR</small>
             </span>
         </span>
+        <a href="login.php" class="botao-entrar">Entrar</a>
     </div>
     <div class="faixa-marca"><span class="f-vermelho"></span><span class="f-amarelo"></span><span class="f-azul"></span><span class="f-roxo"></span></div>
 </header>
