@@ -3,7 +3,7 @@ function confirmarExclusao(nome) {
     return confirm('Tem certeza que deseja excluir o membro "' + nome + '"? Esta ação não pode ser desfeita.');
 }
 
-// Máscaras simples de digitação (CPF, telefone e CEP), sem dependências externas
+// máscaras de CPF, telefone e CEP na mão mesmo, sem lib
 document.addEventListener('DOMContentLoaded', function () {
     const cpf = document.getElementById('cpf');
     if (cpf) {
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Mostra o campo de senha só quando a função escolhida tem acesso administrativo
+    // só mostra o campo de senha se a função não for Membro
     const funcao = document.getElementById('funcao');
     const fieldsetAcesso = document.getElementById('fieldset-acesso');
     if (funcao && fieldsetAcesso) {

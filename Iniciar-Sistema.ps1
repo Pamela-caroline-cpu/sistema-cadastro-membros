@@ -1,9 +1,4 @@
-<#
-    Iniciar Sistema.exe
-    Sobe o banco de dados (MariaDB) e o servidor do sistema (PHP), e abre o
-    navegador direto na tela de login. Feito para o responsável pela igreja
-    só dar dois cliques e o sistema já iniciar por completo.
-#>
+# liga o mariadb (se precisar), sobe o php -S e abre o navegador no login
 
 Add-Type -AssemblyName System.Windows.Forms
 
@@ -25,7 +20,7 @@ function Mostrar-Aviso([string]$mensagem) {
     ) | Out-Null
 }
 
-# Descobre a pasta do projeto, tanto rodando como script quanto compilado em .exe
+# pega a pasta do projeto (funciona tanto rodando o .ps1 quanto o .exe compilado)
 if ($PSScriptRoot) {
     $pastaProjeto = $PSScriptRoot
 } else {
@@ -37,7 +32,7 @@ if (-not (Test-Path (Join-Path $pastaProjeto 'index.php'))) {
     exit 1
 }
 
-# --- 0) Primeira vez nesta máquina? Roda o instalador (PHP + MariaDB) antes ---
+# primeira vez na máquina (sem php/mariadb)? chama o instalador antes
 $marcaInstalado = Join-Path $pastaProjeto '.instalado'
 $servicoJaExiste = Get-Service -Name 'MariaDB' -ErrorAction SilentlyContinue
 $phpJaExiste = Get-Command php.exe -ErrorAction SilentlyContinue
@@ -61,7 +56,7 @@ if (-not (Test-Path $marcaInstalado) -and (-not $servicoJaExiste -or -not $phpJa
     }
 }
 
-# --- 1) Garante que o banco de dados (MariaDB) está rodando ---------------
+# confere se o mariadb tá rodando
 $servicoBanco = Get-Service -Name 'MariaDB' -ErrorAction SilentlyContinue
 if ($servicoBanco -and $servicoBanco.Status -ne 'Running') {
     try {
@@ -72,7 +67,7 @@ if ($servicoBanco -and $servicoBanco.Status -ne 'Running') {
     }
 }
 
-# --- 2) Localiza o PHP -------------------------------------------------------
+# acha o php.exe
 $phpExe = $null
 $phpIni = $null
 
@@ -101,17 +96,13 @@ if (-not $phpExe) {
     exit 1
 }
 
-# Usa o php.ini vendorizado ao lado do PHP (com pdo_mysql habilitado), se existir
+# usa o php.ini do lado do php.exe se tiver (já vem com pdo_mysql ligado)
 $possivelIni = Join-Path (Split-Path -Parent $phpExe) 'php.ini'
 if (Test-Path $possivelIni) {
     $phpIni = $possivelIni
 }
 
-# --- 3) Usa sempre a porta 8000 (fixa) ---------------------------------------
-# A porta é fixa de propósito: se um QR Code for impresso apontando para
-# "http://<IP-da-máquina>:8000/...", ele precisa continuar funcionando sempre.
-# Se a porta mudasse sozinha (por já estar ocupada), o QR impresso quebraria
-# sem ninguém entender o motivo — por isso aqui é erro, não uma porta alternativa.
+# porta fixa em 8000 - se trocasse sozinha o QR code impresso ia parar de funcionar
 function Porta-Livre([int]$porta) {
     try {
         $listener = New-Object System.Net.Sockets.TcpListener([System.Net.IPAddress]::Loopback, $porta)
@@ -129,7 +120,7 @@ if (-not (Porta-Livre $porta)) {
     exit 1
 }
 
-# --- 4) Sobe o servidor PHP numa janela visível (fechar a janela = parar o sistema) ---
+# sobe o php -S numa janela (fechar a janela para o servidor)
 $argsPhp = @('-S', "0.0.0.0:$porta")
 if ($phpIni) { $argsPhp = @('-c', $phpIni) + $argsPhp }
 
@@ -138,6 +129,6 @@ $comandoCmd = "title $tituloJanela && echo Sistema rodando em http://localhost:$
 
 Start-Process -FilePath 'cmd.exe' -ArgumentList "/k $comandoCmd" -WorkingDirectory $pastaProjeto
 
-# --- 5) Espera o servidor subir e abre o navegador ---------------------------
+# espera subir e abre o navegador
 Start-Sleep -Seconds 2
 Start-Process "http://localhost:$porta/login.php"

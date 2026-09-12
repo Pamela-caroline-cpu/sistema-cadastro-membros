@@ -1,7 +1,5 @@
 <?php
-// Controle de acesso: só quem tem função diferente de "Membro" (liderança/administração)
-// consegue autenticar e usar o painel administrativo. Membros comuns não têm senha
-// e usam apenas a página pública de autocadastro (cadastro-publico.php).
+// controle de sessão dos admins (função != Membro)
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();

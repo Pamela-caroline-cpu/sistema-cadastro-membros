@@ -22,15 +22,14 @@ CREATE TABLE IF NOT EXISTS membros (
     data_batismo      DATE NULL,
     funcao            VARCHAR(50) NOT NULL DEFAULT 'Membro',
     status            ENUM('Ativo', 'Inativo') NOT NULL DEFAULT 'Ativo',
-    senha             VARCHAR(255) NULL, -- hash da senha; só é usado por quem tem funcao <> 'Membro' (acesso de administrador)
+    senha             VARCHAR(255) NULL, -- hash, só preenche se funcao <> Membro
     observacoes       TEXT NULL,
     data_cadastro     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     data_atualizacao  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
--- Dados de exemplo para teste/demonstração
--- As contas de liderança abaixo (função diferente de "Membro") já têm senha de demonstração
--- definida como "quadrangular2026" (hash bcrypt) — troque antes de usar em produção.
+-- dados de exemplo pra teste
+-- as contas de liderança já tem senha "quadrangular2026" (trocar depois)
 INSERT INTO membros (nome, data_nascimento, cpf, telefone, email, endereco, bairro, cidade, estado, cep, data_batismo, funcao, status, senha, observacoes) VALUES
 ('Maria Aparecida Souza', '1978-04-12', '123.456.789-01', '(46) 99911-2233', 'maria.souza@email.com', 'Rua das Flores, 120', 'Centro', 'Dois Vizinhos', 'PR', '85660-000', '1995-06-18', 'Líder de Louvor', 'Ativo', '$2y$12$xz2Lzz5.9iuWfGVXdWfvzO9V5m/HJkA5qo/UTOVLaD55rEwl4CcVi', 'Participa do ministério de música há mais de 10 anos.'),
 ('João Batista Ferreira', '1985-11-03', '234.567.890-12', '(46) 99822-3344', 'joao.ferreira@email.com', 'Av. Brasil, 456', 'Jardim América', 'Dois Vizinhos', 'PR', '85660-010', '2001-09-02', 'Diácono', 'Ativo', '$2y$12$xz2Lzz5.9iuWfGVXdWfvzO9V5m/HJkA5qo/UTOVLaD55rEwl4CcVi', NULL),

@@ -34,8 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $erros[] = 'Informe um e-mail válido ou deixe o campo em branco.';
     }
 
-    // A senha é sempre opcional: só quem tem função diferente de "Membro" E senha definida
-    // consegue fazer login. Uma função de liderança sem senha só fica sem acesso ao sistema.
+    // senha é opcional - só quem tem função != Membro e senha preenchida loga
     $funcaoAdministrativa = eh_funcao_administrativa($membro['funcao'] ?: 'Membro');
     $novaSenha = trim($_POST['senha'] ?? '');
     if ($funcaoAdministrativa) {
@@ -47,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($erros)) {
         $senhaParaSalvar = $funcaoAdministrativa
             ? ($novaSenha !== '' ? password_hash($novaSenha, PASSWORD_DEFAULT) : $membro['senha'])
-            : null; // função voltou a ser "Membro": revoga o acesso administrativo
+            : null; // voltou a ser Membro, tira a senha
 
         $sql = 'UPDATE membros SET
                     nome = :nome, data_nascimento = :data_nascimento, cpf = :cpf, telefone = :telefone,

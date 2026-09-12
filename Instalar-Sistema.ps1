@@ -1,21 +1,10 @@
-<#
-    Instalar Sistema.exe
-    Prepara esta máquina do zero para rodar o Sistema de Cadastro de Membros:
-    instala PHP e MariaDB (se ainda não estiverem instalados), configura a
-    extensão do banco, registra e liga o serviço do banco, e importa o
-    banco de dados inicial. Precisa ser executado como Administrador
-    (a própria instalação pede isso automaticamente).
+# instala php + mariadb numa maquina nova. roda como admin (pede sozinho).
+# o Iniciar Sistema.exe ja chama isso na primeira vez, nao precisa abrir na mao
 
-    Normalmente você não precisa abrir este arquivo diretamente: o
-    "Iniciar Sistema.exe" chama ele sozinho na primeira vez que é usado.
-#>
-
-# O executável compilado (ps2exe) trata erros não-fatais como fatais por padrão
-# (ex.: avisos que o mariadb.exe manda para stderr). Isso força o comportamento
-# normal do PowerShell, onde esses avisos não interrompem o script.
+# sem isso o exe compilado trata warning do mariadb.exe (stderr) como erro fatal
 $ErrorActionPreference = 'Continue'
 
-# Descobre a pasta do projeto (funciona tanto como script quanto compilado em .exe)
+# pega a pasta do projeto
 if ($PSScriptRoot) {
     $pastaProjeto = $PSScriptRoot
 } else {
@@ -67,7 +56,7 @@ try {
         exit 1
     }
 
-    # --- 1) PHP -----------------------------------------------------------------
+    # php
     Info 'Verificando o PHP...'
     $phpExe = (Get-Command php.exe -ErrorAction SilentlyContinue).Source
     if (-not $phpExe) {
@@ -109,7 +98,7 @@ try {
         }
     }
 
-    # --- 2) MariaDB ---------------------------------------------------------------
+    # mariadb
     Info 'Verificando o banco de dados (MariaDB)...'
     $pastaMaria = Get-ChildItem 'C:\Program Files' -Filter 'MariaDB*' -Directory -ErrorAction SilentlyContinue |
         Sort-Object Name -Descending | Select-Object -First 1
@@ -134,9 +123,8 @@ try {
     $servico = Get-Service -Name 'MariaDB' -ErrorAction SilentlyContinue
 
     if ($servico) {
-        # O serviço já existe: usa a porta que JÁ está configurada, sem mexer em nada
-        # (recalcular a porta aqui seria errado — o próprio banco já rodando ocuparia
-        # a porta testada, dando a falsa impressão de que ela está em uso por outra coisa)
+        # já existe, usa a porta que já tá configurada (testar porta livre aqui
+        # ia dar errado, o próprio mariadb já rodando ocupa a porta dele mesmo)
         $portaBanco = 3306
         if (Test-Path $myIni) {
             $m = Select-String -Path $myIni -Pattern '^port\s*=\s*(\d+)' | Select-Object -First 1
@@ -150,7 +138,7 @@ try {
             Info "Banco de dados já está rodando (porta $portaBanco)."
         }
     } else {
-        # Primeira instalação nesta máquina: escolhe uma porta livre e registra o serviço
+        # primeira vez: pega porta livre e registra o serviço
         if (Porta-Livre 3306) {
             $portaBanco = 3306
         } else {
@@ -169,7 +157,7 @@ try {
         Start-Sleep -Seconds 2
     }
 
-    # --- 3) Importa o banco de dados (só se ainda não existir) --------------------
+    # importa o schema, só se o banco ainda não existir
     $schema = Join-Path $pastaProjeto 'database\schema.sql'
     if (Test-Path $schema) {
         $bancoExiste = & $mariadbExe -u root -P $portaBanco -h 127.0.0.1 -N -e "SHOW DATABASES LIKE 'igreja_membros';" 2>$null
@@ -181,7 +169,7 @@ try {
         }
     }
 
-    # --- 4) Confere se config/database.php aponta para a porta certa; corrige se não ---
+    # confere/corrige a porta no config/database.php
     $configPhp = Join-Path $pastaProjeto 'config\database.php'
     if (Test-Path $configPhp) {
         $conteudoAtual = Get-Content $configPhp -Raw
@@ -192,7 +180,7 @@ try {
         }
     }
 
-    # --- 5) Cria um atalho na Área de Trabalho para "Iniciar Sistema.exe" ----------
+    # atalho na área de trabalho
     try {
         $iniciarExe = Join-Path $pastaProjeto 'Iniciar Sistema.exe'
         $areaTrabalho = [Environment]::GetFolderPath('Desktop')
@@ -211,7 +199,7 @@ try {
         Add-Content -Path $arquivoLog -Value "$(Get-Date -Format 'HH:mm:ss') [AVISO] Não consegui criar o atalho na Área de Trabalho: $($_.Exception.Message)"
     }
 
-    # --- 6) Marca a instalação como concluída --------------------------------------
+    # marca que já instalou
     Info 'Gravando marcador de instalação concluída...'
     Set-Content -Path (Join-Path $pastaProjeto '.instalado') -Value (Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
 

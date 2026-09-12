@@ -3,17 +3,14 @@ require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/includes/auth.php';
 exigir_login();
 
-// Monta a URL pública de autocadastro a partir do endereço que está sendo usado
-// para acessar o sistema agora — funciona tanto em localhost/teste quanto no
-// domínio real, sem precisar editar nada quando o sistema for publicado.
+// pega o host que a pessoa usou pra acessar, então o link/QR já sai certo
+// (não precisa trocar isso na mão quando mudar de servidor)
 $esquema = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 $pasta = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])), '/');
 $urlPublica = "{$esquema}://{$host}{$pasta}/cadastro-publico.php";
 
-// Um QR Code gerado a partir de "localhost" ou "127.0.0.1" só funciona neste
-// computador — para imprimir e usar em outros celulares, é preciso acessar
-// esta página pelo IP fixo da máquina na rede (ex.: 192.168.x.x).
+// se acessou por localhost o QR só funciona nesse pc mesmo, avisar
 $enderecoLocal = (bool) preg_match('/^(localhost|127\.0\.0\.1|\[::1\])(:|$)/i', $host);
 
 $tituloPagina = 'QR Code de Autocadastro';

@@ -1,10 +1,6 @@
 <?php
-// Página PÚBLICA de autocadastro — sem login. É para onde o QR Code aponta.
-// A pessoa pode escolher a qual grupo pertence (Membro, Obreiro(a), Diácono etc.),
-// mas isso sozinho NÃO dá acesso ao sistema: login só funciona com função
-// diferente de "Membro" E senha definida, e a senha NUNCA é definida por aqui
-// (não existe campo de senha neste formulário). Quem decide dar acesso de login
-// é sempre um administrador, depois, pelo painel — ver includes/auth.php.
+// tela pública, sem login - pra onde o QR code aponta
+// não tem campo de senha aqui, então só escolher a função não dá acesso admin
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/includes/funcoes.php';
 

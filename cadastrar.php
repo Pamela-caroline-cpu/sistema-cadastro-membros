@@ -22,9 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $erros[] = 'Informe um e-mail válido ou deixe o campo em branco.';
     }
 
-    // A senha é sempre opcional: só quem tem função diferente de "Membro" E senha definida
-    // consegue fazer login. Dá para cadastrar alguém com função de liderança sem senha —
-    // ela só não terá acesso ao sistema até um administrador definir uma senha depois.
+    // senha é opcional - só quem tem função != Membro e senha preenchida loga
     $funcaoAdministrativa = eh_funcao_administrativa($membro['funcao'] ?: 'Membro');
     if ($funcaoAdministrativa && $membro['senha'] !== '' && strlen($membro['senha']) < 6) {
         $erros[] = 'A senha de acesso deve ter pelo menos 6 caracteres.';

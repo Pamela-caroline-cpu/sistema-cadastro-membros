@@ -15,8 +15,7 @@ function exibir(?string $valor): string
     return $valor !== null && $valor !== '' ? htmlspecialchars($valor) : '-';
 }
 
-// Lista única de grupos/funções da igreja — usada tanto no formulário administrativo
-// quanto no autocadastro público, para os dois sempre oferecerem as mesmas opções.
+// mesma lista usada no form admin e no autocadastro público
 function funcoes_disponiveis(): array
 {
     return ['Membro', 'Líder de Louvor', 'Diácono', 'Diaconisa', 'Obreiro(a)', 'Pastor Auxiliar', 'Pastor Titular'];

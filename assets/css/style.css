@@ -1,12 +1,7 @@
-/* ==========================================================================
-   Este arquivo é MOBILE-FIRST: os estilos "soltos" abaixo (sem media query)
-   valem para celular, que é o principal dispositivo de uso deste sistema.
-   As telas maiores (tablet/desktop) só GANHAM camadas extras dentro do
-   @media (min-width: 720px) no final do arquivo.
-   ========================================================================== */
+/* mobile first - o que tá solto aqui é pra celular, o @media lá embaixo é o extra pra telas maiores */
 
 :root {
-    /* Paleta extraída da logo da igreja (cruz, pomba, cálice e coroa) */
+    /* cores tiradas da logo (cruz, pomba, cálice, coroa) */
     --azul-principal: #0089cd;
     --azul-escuro: #004b71;
     --amarelo: #ffcb05;
@@ -415,10 +410,7 @@ td[data-rotulo="Ações"] { display: flex; flex-wrap: wrap; gap: 8px; padding-to
     .cartao-qrcode { border: none; }
 }
 
-/* ==========================================================================
-   A PARTIR DAQUI: camadas progressivas para telas maiores (tablet/desktop).
-   Nada aqui é necessário para o celular funcionar — só aproveita o espaço extra.
-   ========================================================================== */
+/* daqui pra baixo é só o extra pra tablet/desktop, celular já funciona sem isso */
 @media (min-width: 720px) {
     .topo-conteudo { padding: 16px 24px; }
     .marca { font-size: 1.1rem; gap: 12px; }
