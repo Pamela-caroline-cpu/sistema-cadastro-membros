@@ -31,9 +31,10 @@ Se for rodar em outra máquina sem os executáveis, tem o passo a passo manual l
 
 ## Login e acesso admin
 
-Só tem acesso ao painel quem tem função diferente de "Membro" **e** senha cadastrada. Escolher um grupo tipo
-"Obreiro" no autocadastro público não dá acesso sozinho - não tem campo de senha ali. Quem libera acesso é
-sempre um admin, editando o cadastro da pessoa e definindo uma senha.
+Só tem acesso ao painel quem tem função diferente de "Membro" **e** senha cadastrada. No autocadastro público,
+ao escolher um grupo diferente de "Membro" (Obreiro, Diácono etc), aparece um campo de senha opcional - se a
+pessoa preencher, ela já consegue logar na hora com o e-mail e a senha que informou, sem precisar de aprovação
+de ninguém. Um admin também pode cadastrar/editar alguém e definir a senha depois, se preferir.
 
 Login de teste (trocar antes de usar de verdade):
 - `maria.souza@email.com` / `quadrangular2026`
@@ -111,8 +112,14 @@ uma pra essa pessoa) e observações. `schema.sql` já vem com 5 membros de exem
 
 Consultas todas com prepared statement (PDO), saída sempre passando por `htmlspecialchars`, senha com
 `password_hash`/`password_verify` (bcrypt, nunca texto puro), exclusão só via POST com confirmação. Páginas
-administrativas exigem login. O form público nunca tem campo de senha, então dar a função "Obreiro" pra
-alguém por ali não vira acesso admin sozinho.
+administrativas exigem login.
+
+Atenção: o autocadastro público permite que a própria pessoa defina uma senha e ganhe acesso admin na hora,
+ao escolher uma função diferente de "Membro" e preencher o campo de senha. Isso foi uma decisão consciente
+pra facilitar o autoatendimento (a pessoa não precisa esperar um admin liberar o acesso depois), mas quer
+dizer que qualquer um que escaneie o QR Code do autocadastro e escolha uma função de liderança consegue se
+dar acesso total ao sistema sozinho, sem aprovação de ninguém. Vale considerar quem tem acesso físico ao QR
+Code impresso.
 
 Lembrar de trocar a senha de demonstração antes de usar de verdade.
 

@@ -1,13 +1,14 @@
 <?php
 // tela pública, sem login - pra onde o QR code aponta
-// não tem campo de senha aqui, então só escolher a função não dá acesso admin
+// se escolher função != Membro, a própria pessoa pode definir a senha dela aqui
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/includes/funcoes.php';
+require_once __DIR__ . '/includes/auth.php';
 
 $membro = [
     'nome' => '', 'data_nascimento' => '', 'cpf' => '', 'telefone' => '', 'email' => '',
     'endereco' => '', 'bairro' => '', 'cidade' => 'Dois Vizinhos', 'estado' => 'PR', 'cep' => '',
-    'data_batismo' => '', 'funcao' => 'Membro',
+    'data_batismo' => '', 'funcao' => 'Membro', 'senha' => '',
 ];
 $erros = [];
 $sucesso = false;
@@ -28,11 +29,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $erros[] = 'Informe um e-mail válido ou deixe o campo em branco.';
     }
 
+    $funcaoAdministrativa = eh_funcao_administrativa($membro['funcao']);
+    if ($funcaoAdministrativa && $membro['senha'] !== '' && strlen($membro['senha']) < 6) {
+        $erros[] = 'A senha de acesso deve ter pelo menos 6 caracteres.';
+    }
+
     if (empty($erros)) {
         $sql = 'INSERT INTO membros
-                    (nome, data_nascimento, cpf, telefone, email, endereco, bairro, cidade, estado, cep, data_batismo, funcao, status)
+                    (nome, data_nascimento, cpf, telefone, email, endereco, bairro, cidade, estado, cep, data_batismo, funcao, status, senha)
                 VALUES
-                    (:nome, :data_nascimento, :cpf, :telefone, :email, :endereco, :bairro, :cidade, :estado, :cep, :data_batismo, :funcao, :status)';
+                    (:nome, :data_nascimento, :cpf, :telefone, :email, :endereco, :bairro, :cidade, :estado, :cep, :data_batismo, :funcao, :status, :senha)';
 
         try {
             $comando = $pdo->prepare($sql);
@@ -50,6 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'data_batismo'    => $membro['data_batismo'] ?: null,
                 'funcao'          => $membro['funcao'],
                 'status'          => 'Ativo',
+                'senha'           => ($funcaoAdministrativa && $membro['senha'] !== '') ? password_hash($membro['senha'], PASSWORD_DEFAULT) : null,
             ]);
             $sucesso = true;
         } catch (PDOException $e) {
@@ -162,6 +169,21 @@ function valor_publico(array $membro, string $campo): string
                 <div class="campo">
                     <label for="data_batismo">Data de batismo (se houver)</label>
                     <input type="date" id="data_batismo" name="data_batismo" value="<?= valor_publico($membro, 'data_batismo') ?>">
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset id="fieldset-acesso" <?= $membro['funcao'] === 'Membro' ? 'style="display:none"' : '' ?>>
+            <legend>Acesso ao sistema</legend>
+            <div class="grade-form">
+                <div class="campo campo-largo">
+                    <label for="senha">Senha de acesso (opcional)</label>
+                    <input type="password" id="senha" name="senha" minlength="6" autocomplete="new-password"
+                        placeholder="Defina uma senha para acessar a área administrativa">
+                    <small class="ajuda-campo">
+                        Só preencha se você faz parte da liderança/administração e vai usar o sistema. Com essa
+                        senha e o e-mail informado acima, você já consegue entrar em <code>login.php</code>.
+                    </small>
                 </div>
             </div>
         </fieldset>
