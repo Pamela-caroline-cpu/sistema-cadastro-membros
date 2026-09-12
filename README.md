@@ -16,7 +16,28 @@ Uma janela preta (o servidor) vai abrir e **precisa continuar aberta** enquanto 
 > não tem assinatura digital paga — clique em **"Mais informações" → "Executar assim mesmo"**. É seguro: o
 > código-fonte está em `Iniciar-Sistema.ps1`, na mesma pasta, para quem quiser conferir.
 
+Há **dois executáveis** na pasta — eles têm ícones diferentes de propósito, para não confundir:
+
+| Executável | Ícone | Quando usar |
+|---|---|---|
+| **`Iniciar Sistema.exe`** | Logo da igreja (liso) | Sempre — é o que você usa no dia a dia para abrir o sistema. |
+| **`Instalar Sistema.exe`** | Logo da igreja com uma seta preta de download | Só na primeira vez numa máquina nova, e só se necessário — o próprio `Iniciar Sistema.exe` já chama ele sozinho quando detecta que falta algo (veja "Instalador automático" abaixo). |
+
 Para rodar em outro computador (ou sem o executável), veja "Como executar localmente" mais abaixo.
+
+## Instalador automático (primeira execução numa máquina nova)
+
+Numa máquina que ainda não tem PHP nem o banco de dados, `Iniciar Sistema.exe` detecta isso sozinho e chama
+`Instalar Sistema.exe` antes de continuar — sem precisar fazer nada além de dar dois cliques em `Iniciar
+Sistema.exe` normalmente. O instalador:
+1. Instala o PHP, se necessário (via `winget`);
+2. Instala e configura o MariaDB, se necessário, registra e liga o serviço do Windows;
+3. Importa o banco de dados inicial (só se ele ainda não existir — nunca apaga dados já cadastrados);
+4. Ajusta `config/database.php` com a porta certa do banco.
+
+O Windows vai pedir permissão de Administrador (obrigatório para instalar programas) — é só clicar em "Sim".
+Uma janela mostra o progresso e fecha sozinha ao final; os detalhes ficam salvos em `instalar.log`, na mesma
+pasta, caso algo dê errado.
 
 ## Funcionalidades
 
@@ -62,7 +83,44 @@ senha atual, ou digite uma nova para trocá-la.
 
 ## QR Code de autocadastro
 
-Logado como administrador, acesse **"QR Code"** no menu (`qrcode.php`). A página gera automaticamente um QR Code apontando para `cadastro-publico.php` **usando o endereço atual do sistema** (funciona tanto em `localhost` quanto no domínio real, sem precisar editar nada). É só imprimir ou exibir na tela para a igreja escanear.
+Logado como administrador, acesse **"QR Code"** no menu (`qrcode.php`). A página gera automaticamente um QR Code apontando para `cadastro-publico.php` **usando o endereço atual do sistema** (funciona tanto em `localhost` quanto no domínio real, sem precisar editar nada). Dá pra **baixar como imagem PNG** (botão "Baixar QR Code") ou **imprimir** direto da página.
+
+⚠️ Se você acessar `qrcode.php` por `localhost`, o QR gerado só funciona neste computador — para gerar um QR que funcione nos celulares da igreja, acesse pelo IP da máquina na rede (veja a seção abaixo).
+
+## IP fixo para o QR Code sempre funcionar
+
+O sistema vai rodar num computador fixo na igreja, acessado pelo Wi-Fi local. Para o QR Code **impresso uma vez** continuar funcionando para sempre, o endereço desse computador na rede (IP + porta) **não pode mudar**. Por padrão, o Windows pega um IP diferente a cada tanto tempo (fornecido pelo roteador) — por isso é preciso fixá-lo. A porta já é sempre fixa em **8000** (o "Iniciar Sistema.exe" não usa outra porta automaticamente).
+
+Duas formas de fixar o IP (escolha uma):
+
+### Opção A — Reserva de IP no roteador (recomendado)
+
+Não mexe em nada no computador; o roteador sempre dá o mesmo IP pra essa máquina.
+
+1. Descubra o endereço físico (MAC) da placa de rede do computador:
+   ```powershell
+   ipconfig /all
+   ```
+   Procure por "Endereço Físico" da conexão em uso (Ethernet ou Wi-Fi).
+2. Entre no painel do roteador (geralmente `192.168.0.1` ou `192.168.1.1` no navegador — veja o manual do roteador da igreja).
+3. Procure por "Reserva de DHCP" / "DHCP Reservation" / "IP Reservado" e associe o MAC do passo 1 a um IP fixo (ex.: `192.168.1.50`).
+4. Reinicie o computador (ou desconecte/reconecte a rede) para ele pegar o IP reservado.
+
+### Opção B — IP fixo direto no Windows
+
+Use se não tiver acesso ao roteador. Passo a passo (ajuste os valores conforme a rede da igreja — pergunte pra quem administra a internet local, ou veja o IP atual com `ipconfig`):
+
+```powershell
+# Exemplo: fixa o IP 192.168.1.50 na rede 192.168.1.0/24, gateway 192.168.1.1
+New-NetIPAddress -InterfaceAlias "Ethernet" -IPAddress 192.168.1.50 -PrefixLength 24 -DefaultGateway 192.168.1.1
+Set-DnsClientServerAddress -InterfaceAlias "Ethernet" -ServerAddresses 8.8.8.8,1.1.1.1
+```
+Troque `"Ethernet"` pelo nome da conexão certa (veja com `Get-NetAdapter`) e escolha um IP **fora** da faixa que o roteador distribui automaticamente, para não conflitar com outro dispositivo.
+
+### Depois de fixar o IP
+
+1. No próprio computador (ou em qualquer aparelho na mesma rede), acesse `http://<IP-FIXO>:8000/qrcode.php` (ex.: `http://192.168.1.50:8000/qrcode.php`) — **não** `localhost`.
+2. Baixe ou imprima o QR Code nessa página. Ele vai continuar válido enquanto o IP não mudar.
 
 ## Tecnologias utilizadas
 
@@ -77,12 +135,15 @@ Logado como administrador, acesse **"QR Code"** no menu (`qrcode.php`). A págin
 sistema-cadastro-membros/
 ├── Iniciar Sistema.exe        # Dê dois cliques aqui para ligar tudo de uma vez
 ├── Iniciar-Sistema.ps1        # Código-fonte do executável acima (PowerShell)
+├── Instalar Sistema.exe       # Instala PHP/MariaDB numa máquina nova (chamado sozinho, se precisar)
+├── Instalar-Sistema.ps1       # Código-fonte do executável acima (PowerShell)
 ├── assets/
 │   ├── css/style.css        # Estilos da interface
 │   ├── js/script.js         # Máscaras de campo e confirmação de exclusão
 │   ├── js/qrcode.js         # Biblioteca de geração de QR Code (vendorizada, MIT)
 │   ├── img/logo.jpg         # Logo da igreja
-│   └── img/logo.ico         # Ícone usado pelo Iniciar Sistema.exe
+│   ├── img/logo.ico         # Ícone usado pelo Iniciar Sistema.exe
+│   └── img/logo-instalador.ico # Ícone usado pelo Instalar Sistema.exe (com selo de download)
 ├── config/
 │   └── database.php         # Configuração de conexão com o MySQL (PDO)
 ├── database/

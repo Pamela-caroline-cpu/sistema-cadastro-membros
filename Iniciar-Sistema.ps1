@@ -107,7 +107,11 @@ if (Test-Path $possivelIni) {
     $phpIni = $possivelIni
 }
 
-# --- 3) Escolhe uma porta livre, começando em 8000 --------------------------
+# --- 3) Usa sempre a porta 8000 (fixa) ---------------------------------------
+# A porta é fixa de propósito: se um QR Code for impresso apontando para
+# "http://<IP-da-máquina>:8000/...", ele precisa continuar funcionando sempre.
+# Se a porta mudasse sozinha (por já estar ocupada), o QR impresso quebraria
+# sem ninguém entender o motivo — por isso aqui é erro, não uma porta alternativa.
 function Porta-Livre([int]$porta) {
     try {
         $listener = New-Object System.Net.Sockets.TcpListener([System.Net.IPAddress]::Loopback, $porta)
@@ -120,8 +124,9 @@ function Porta-Livre([int]$porta) {
 }
 
 $porta = 8000
-while (-not (Porta-Livre $porta) -and $porta -lt 8020) {
-    $porta++
+if (-not (Porta-Livre $porta)) {
+    Mostrar-Erro "A porta $porta já está sendo usada por outro programa nesta máquina.`n`nIsso pode acontecer se o sistema já estiver rodando em outra janela (veja se já não há uma janela preta aberta) ou se outro programa está usando essa porta. Feche o que estiver usando a porta $porta e tente de novo.`n`nA porta é sempre fixa em $porta para que o QR Code impresso continue funcionando."
+    exit 1
 }
 
 # --- 4) Sobe o servidor PHP numa janela visível (fechar a janela = parar o sistema) ---
