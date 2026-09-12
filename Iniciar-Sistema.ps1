@@ -37,6 +37,30 @@ if (-not (Test-Path (Join-Path $pastaProjeto 'index.php'))) {
     exit 1
 }
 
+# --- 0) Primeira vez nesta máquina? Roda o instalador (PHP + MariaDB) antes ---
+$marcaInstalado = Join-Path $pastaProjeto '.instalado'
+$servicoJaExiste = Get-Service -Name 'MariaDB' -ErrorAction SilentlyContinue
+$phpJaExiste = Get-Command php.exe -ErrorAction SilentlyContinue
+
+if (-not (Test-Path $marcaInstalado) -and (-not $servicoJaExiste -or -not $phpJaExiste)) {
+    $instaladorExe = Join-Path $pastaProjeto 'Instalar Sistema.exe'
+    $instaladorPs1 = Join-Path $pastaProjeto 'Instalar-Sistema.ps1'
+
+    try {
+        if (Test-Path $instaladorExe) {
+            Start-Process -FilePath $instaladorExe -Verb RunAs -Wait -ErrorAction Stop
+        } elseif (Test-Path $instaladorPs1) {
+            Start-Process -FilePath 'powershell.exe' -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$instaladorPs1`"" -Verb RunAs -Wait -ErrorAction Stop
+        } else {
+            Mostrar-Erro "Este é o primeiro uso nesta máquina, mas não encontrei o instalador ('Instalar Sistema.exe').`n`nMantenha-o na mesma pasta do sistema."
+            exit 1
+        }
+    } catch {
+        Mostrar-Erro "A instalação precisa de permissão de Administrador e foi cancelada.`n`nDê dois cliques em 'Iniciar Sistema.exe' de novo e clique em 'Sim' quando o Windows pedir permissão."
+        exit 1
+    }
+}
+
 # --- 1) Garante que o banco de dados (MariaDB) está rodando ---------------
 $servicoBanco = Get-Service -Name 'MariaDB' -ErrorAction SilentlyContinue
 if ($servicoBanco -and $servicoBanco.Status -ne 'Running') {
@@ -58,11 +82,15 @@ if ($comandoPhp) {
 }
 
 if (-not $phpExe) {
-    $candidatos = @(
-        "$env:LOCALAPPDATA\Microsoft\WinGet\Packages\PHP.PHP.8.4_Microsoft.Winget.Source_8wekyb3d8bbwe\php.exe",
-        'C:\xampp\php\php.exe',
-        'C:\php\php.exe'
-    )
+    $pastaWinget = Get-ChildItem "$env:LOCALAPPDATA\Microsoft\WinGet\Packages" -Filter 'PHP.PHP.*' -Directory -ErrorAction SilentlyContinue |
+        Sort-Object Name -Descending | Select-Object -First 1
+    if ($pastaWinget -and (Test-Path (Join-Path $pastaWinget.FullName 'php.exe'))) {
+        $phpExe = Join-Path $pastaWinget.FullName 'php.exe'
+    }
+}
+
+if (-not $phpExe) {
+    $candidatos = @('C:\xampp\php\php.exe', 'C:\php\php.exe')
     foreach ($candidato in $candidatos) {
         if (Test-Path $candidato) { $phpExe = $candidato; break }
     }

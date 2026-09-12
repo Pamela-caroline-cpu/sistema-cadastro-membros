@@ -6,3 +6,7 @@ desktop.ini
 # Editores
 .vscode/
 .idea/
+
+# Gerados pelo instalador/execução (não fazem parte do código-fonte)
+.instalado
+instalar.log
